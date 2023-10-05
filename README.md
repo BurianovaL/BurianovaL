@@ -9,10 +9,10 @@ I love working with people and children, helping them to develop and learn somet
 
 
 About me: 
-📝 Copywriter, proofreader 
-🗞️ Editor (https://muckrack.com/lucie-burianova)
-👩‍💻 Analyst
-🤹 Skilltoy enthusiast, 🎸 guitarist, ☕️ coffee lover
+- 📝 Copywriter, proofreader 
+- 🗞️ Editor (https://muckrack.com/lucie-burianova)
+- 👩‍💻 Analyst
+- 🤹 Skilltoy enthusiast, 🎸 guitarist, ☕️ coffee lover
 
 <!---
 BurianovaL/BurianovaL is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
