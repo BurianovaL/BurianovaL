@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Čas do konce vyučování</title>
+  <style>
+    :root{
+      --bg:#0d1117;
+      --card:#161b22;
+      --accent:#FF1493;
+      --text:#ffffff;
+      --muted:#9ca3af;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      padding:24px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.4);
+      padding:32px;
+      width:100%;
+      max-width:520px;
+      text-align:center;
+    }
+    h1{
+      margin:0 0 16px 0;
+      font-size:20px;
+      font-weight:600;
+    }
+    h2{
+      margin-top:24px;
+      font-size:18px;
+      font-weight:600;
+      color:var(--accent);
+    }
+    .timer{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      align-items:baseline;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .time-segment{
+      background:#1f2937;
+      border-radius:10px;
+      padding:14px 18px;
+      min-width:96px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    }
+    .num{
+      font-size:28px;
+      font-weight:700;
+      color:var(--accent);
+      letter-spacing:0.5px;
+    }
+    .label{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    .status{
+      font-size:14px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Kolik času zbývá do konce dnešního vyučování?</h1>
+
+    <div id="countdown" class="timer">
+      <div class="time-segment">
+        <div id="hours" class="num">--</div>
+        <div class="label">hodin</div>
+      </div>
+      <div class="time-segment">
+        <div id="minutes" class="num">--</div>
+        <div class="label">minut</div>
+      </div>
+      <div class="time-segment">
+        <div id="seconds" class="num">--</div>
+        <div class="label">sekund</div>
+      </div>
+    </div>
+
+    <div id="statusText" class="status">Načítám...</div>
+
+    <h2 id="nextTitle" style="display:none;">Čas do začátku dalšího vyučování</h2>
+
+    <div id="nextCountdown" class="timer" style="display:none;">
+      <div class="time-segment">
+        <div id="nHours" class="num">--</div>
+        <div class="label">hodin</div>
+      </div>
+      <div class="time-segment">
+        <div id="nMinutes" class="num">--</div>
+        <div class="label">minut</div>
+      </div>
+      <div class="time-segment">
+        <div id="nSeconds" class="num">--</div>
+        <div class="label">sekund</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const elHours = document.getElementById('hours');
+    const elMinutes = document.getElementById('minutes');
+    const elSeconds = document.getElementById('seconds');
+    const elStatus = document.getElementById('statusText');
+
+    const nHours = document.getElementById('nHours');
+    const nMinutes = document.getElementById('nMinutes');
+    const nSeconds = document.getElementById('nSeconds');
+    const nextTimer = document.getElementById('nextCountdown');
+    const nextTitle = document.getElementById('nextTitle');
+
+    function pad(n){ return n.toString().padStart(2,'0'); }
+
+    // --- Výuka ---
+    const schedule = [
+      { day: 3, start: "16:00", end: "17:40" }, // středa
+      { day: 5, start: "10:00", end: "15:40" }  // pátek
+    ];
+
+    function getTodayTargetDate(timeStr){
+      const [hh, mm] = timeStr.split(':').map(Number);
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+    }
+
+    function getNextLesson(now){
+      // najdi další lekci po aktuálním čase
+      const today = now.getDay(); // 0 = neděle, 1 = pondělí...
+      for (let i = 0; i < 14; i++){ // 2 týdny dopředu pro jistotu
+        const check = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+        const day = check.getDay();
+        const lesson = schedule.find(l => l.day === day);
+        if (lesson){
+          const start = new Date(check.getFullYear(), check.getMonth(), check.getDate(), ...lesson.start.split(':').map(Number));
+          const end = new Date(check.getFullYear(), check.getMonth(), check.getDate(), ...lesson.end.split(':').map(Number));
+          if (end > now){
+            return {start, end};
+          }
+        }
+      }
+      return null;
+    }
+
+    function updateTimers(){
+      const now = new Date();
+      const lesson = getNextLesson(now);
+      if (!lesson) return;
+
+      const diffToEnd = lesson.end - now;
+      const diffToStart = lesson.start - now;
+
+      if (diffToStart <= 0 && diffToEnd > 0){
+        // probíhá výuka
+        const totalSec = Math.floor(diffToEnd / 1000);
+        const hours = Math.floor(totalSec / 3600);
+        const minutes = Math.floor((totalSec % 3600) / 60);
+        const seconds = totalSec % 60;
+
+        elHours.textContent = pad(hours);
+        elMinutes.textContent = pad(minutes);
+        elSeconds.textContent = pad(seconds);
+        elStatus.textContent = 'Vyučování dnes končí v ' + lesson.end.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'}) + '. To už vydržíme!';
+
+        nextTitle.style.display = 'none';
+        nextTimer.style.display = 'none';
+      }
+      else if (diffToStart > 0){
+        // vyučování zatím nezačalo – odpočet do začátku
+        elHours.textContent = '00';
+        elMinutes.textContent = '00';
+        elSeconds.textContent = '00';
+        elStatus.textContent = 'Vyučování dnes ještě nezačalo.';
+
+        nextTitle.style.display = 'block';
+        nextTimer.style.display = 'flex';
+
+        const totalSec = Math.floor(diffToStart / 1000);
+        const hours = Math.floor(totalSec / 3600);
+        const minutes = Math.floor((totalSec % 3600) / 60);
+        const seconds = totalSec % 60;
+
+        nHours.textContent = pad(hours);
+        nMinutes.textContent = pad(minutes);
+        nSeconds.textContent = pad(seconds);
+      }
+      else {
+        // po skončení výuky – odpočet do další
+        elHours.textContent = '00';
+        elMinutes.textContent = '00';
+        elSeconds.textContent = '00';
+        elStatus.textContent = 'Vyučování dnes již skončilo.';
+
+        const nextLesson = getNextLesson(new Date(now.getTime() + 1000));
+        if (nextLesson){
+          nextTitle.style.display = 'block';
+          nextTimer.style.display = 'flex';
+          const totalSec = Math.floor((nextLesson.start - now) / 1000);
+          const hours = Math.floor(totalSec / 3600);
+          const minutes = Math.floor((totalSec % 3600) / 60);
+          const seconds = totalSec % 60;
+
+          nHours.textContent = pad(hours);
+          nMinutes.textContent = pad(minutes);
+          nSeconds.textContent = pad(seconds);
+        }
+      }
+    }
+
+    updateTimers();
+    setInterval(updateTimers, 1000);
+  </script>
+</body>
+</html>
