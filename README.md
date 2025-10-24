@@ -9,8 +9,8 @@ I love working with people and children, helping them to develop and learn somet
 
 
 About me: 
-- 🗞️ Editor (https://muckrack.com/lucie-burianova)
-- 👩‍💻 Analyst
+- 🗞️ Journalist (https://muckrack.com/lucie-burianova)
+- 👩‍💻 Analyst, data visualizer
 - 🤹 Skilltoy enthusiast, 🎸 guitarist, ☕️ coffee lover
 
 <!---
