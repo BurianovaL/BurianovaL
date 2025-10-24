@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demotivační citáty</title>
+<style>
+:root{
+  --bg:#0b0f13;
+  --card:#0f1620;
+  --muted:#9aa6b2;
+  --accent:#6c7a89;
+  --glass: rgba(255,255,255,0.03);
+}
+html,body{
+  height:100%;
+  margin:0;
+  font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg,#07090b 0%, #0b1116 100%);
+  color:#de3163;
+}
+.wrap{
+  min-height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:48px;
+}
+.card{
+  width:min(880px,96%);
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;
+  padding:36px;
+  box-shadow:0 8px 30px rgba(2,6,12,0.6);
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.03);
+  text-align:center;
+}
+h1{
+  font-size:24px;
+  margin:0;
+  font-weight:600;
+  letter-spacing:0.4px;
+}
+p.lead{
+  margin:10px 0 20px 0;
+  color:var(--muted);
+  font-size:14px;
+}
+.quote-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.02);
+}
+blockquote{
+  margin:0;
+  padding:0 10px 8px 10px;
+  font-size:26px;
+  line-height:1.3;
+  text-align:center;
+  font-weight:500;
+  max-width:900px;
+}
+cite{
+  display:block;
+  margin-top:16px;
+  color:var(--muted);
+  font-size:13px;
+}
+.countdown{
+  margin-top:20px;
+  font-size:14px;
+  color:var(--muted);
+}
+.muted{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:12px;
+  text-align:center;
+}
+@media (max-width:520px){
+  blockquote{font-size:20px;padding:0 6px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="card" role="main">
+    <header>
+      <div>
+        <h1>Demotivační citáty</h1>
+        <p class="lead">Malá sbírka postranních myšlenek pro skeptickou náladu.</p>
+      </div>
+    </header>
+
+    <section class="quote-box" aria-live="polite">
+      <blockquote id="quote">Právě teď si přečtěte citát a připomeňte si, že svět jde dál i bez nadšení.</blockquote>
+      <cite id="author">— Demotivátor</cite>
+      <div class="countdown">Další citát za <span id="timer">25</span> s</div>
+      <div class="muted">Ps: citáty jsou fiktivní a slouží pro humornou nebo satirickou inspiraci.</div>
+    </section>
+  </main>
+</div>
+
+<script>
+const quotes = [
+  "Sny se neplní, jen se s věkem zmenšují.",
+  "Když to dnes pokazíš, zítra to můžeš pokazit znovu – s praxí.",
+  "Tvůj potenciál je přeceňovaný, ale aspoň máš potenciál.",
+  "Bez práce nejsou koláče. Ale i s prací nejsou zaručené.",
+  "Všechno se děje z nějakého důvodu. Většinou špatného.",
+  "Zítra bude líp. Ale ne pro tebe.",
+  "Není důležité vyhrát, stačí jen neztrapnit se úplně.",
+  "Dneska je nový den na stejné chyby.",
+  "I cesta dlouhá tisíc mil začíná prvním krokem... do slepé uličky.",
+  "Co tě nezabije, to tě většinou unaví.",
+  "Na konci tunelu je světlo. Ale je to vlak.",
+  "Každý problém má řešení. Ale tobě nedostupné.",
+  "Dělej, co miluješ – a stejně tě to bude otravovat.",
+  "Trpělivost růže přináší. Ale ty jsi alergický.",
+  "Nic není nemožné. Jen většina věcí za to nestojí.",
+  "Štěstí přeje připraveným. Ale ne vždy tobě.",
+  "Věř v sebe. Aspoň někdo musí.",
+  "Když padneš na dno, můžeš tam chvíli zůstat – je to tam klidné.",
+  "Život je hra, kterou nikdo nevyhrává.",
+  "Čas léčí všechny rány, ale jizvy zůstávají.",
+  "Každý den je dar. Bohužel ne vždy požadovaný.",
+  "Zázraky se dějí – jen ne zrovna teď.",
+  "Nikdy není tak špatně, aby nemohlo být hůř. A často i bude."
+];
+
+let index = 0;
+let countdown = 25;
+const quoteEl = document.getElementById("quote");
+const authorEl = document.getElementById("author");
+const timerEl = document.getElementById("timer");
+
+function showQuote() {
+  quoteEl.textContent = quotes[index];
+  authorEl.textContent = "— Demotivátor";
+  index = (index + 1) % quotes.length;
+}
+
+function updateTimer() {
+  timerEl.textContent = countdown;
+  countdown--;
+  if (countdown < 0) {
+    countdown = 25;
+    showQuote();
+  }
+}
+
+showQuote();
+setInterval(updateTimer, 1000);
+</script>
+</body>
+</html>
